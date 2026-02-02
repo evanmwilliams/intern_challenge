@@ -817,12 +817,8 @@ def weiszfeld_polish(cf, pin_features, edge_list, iters=5, beta=1e-4, margin=1e-
     
     return out
 
-def legalize_placement(cell_features, margin=0.0, max_iters=300, step_frac=0.9, tol=1e-6):
-    """Overlap removal using quadtree for O(N log N) pair detection, vectorized."""
-    cf = cell_features.clone()
-    N = cf.shape[0]
-    if N <= 1:
-        return cf
+def legalize_placement(cell_features, margin=0.0, max_iters=None, step_frac=0.9, tol=1e-6):
+    return _shelf_pack(cell_features, margin)
 
     x = cf[:, CellFeatureIdx.X].clone()
     y = cf[:, CellFeatureIdx.Y].clone()
@@ -877,7 +873,8 @@ def legalize_placement(cell_features, margin=0.0, max_iters=300, step_frac=0.9, 
         cf = _shelf_pack(cf, margin)
     return cf
 
-def fast_legalize(cf, margin=1e-4, bin_scale=2.0, iters=30):
+def fast_legalize(cf, margin=1e-4, bin_scale=2.0, iters=None):
+    return _shelf_pack(cf, margin)
     """Spatial-hash based legalization - O(N) per iteration, vectorized."""
     x = cf[:, CellFeatureIdx.X].clone()
     y = cf[:, CellFeatureIdx.Y].clone()
